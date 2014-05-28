@@ -1116,17 +1116,17 @@ static unsigned int GetNextTargetRequired_(const CBlockIndex* pindexLast, bool f
 
     int64_t nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
     if (nActualSpacing < 0)
-        nActualSpacing = nTargetSpacing;
+        nActualSpacing = fProofOfStake? nStakeTargetSpacing : nTargetSpacing;
 
     // ppcoin: target change every block
     // ppcoin: retarget with exponential moving toward target spacing
     CBigNum bnNew;
     bnNew.SetCompact(pindexPrev->nBits);
 
-    int64_t nTargetSpacing = fProofOfStake? nStakeTargetSpacing : nTargetSpacing;
-    int64_t nInterval = nTargetTimespan / nTargetSpacing;
-    bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
-    bnNew /= ((nInterval + 1) * nTargetSpacing);
+    int64_t nTargetSpacing_Final = fProofOfStake? nStakeTargetSpacing : nTargetSpacing;
+    int64_t nInterval = nTargetTimespan / nTargetSpacing_Final;
+    bnNew *= ((nInterval - 1) * nTargetSpacing_Final + nActualSpacing + nActualSpacing);
+    bnNew /= ((nInterval + 1) * nTargetSpacing_Final);
 
     if (bnNew <= 0 || bnNew > bnTargetLimit)
         bnNew = bnTargetLimit;
