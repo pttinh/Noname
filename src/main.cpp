@@ -39,7 +39,8 @@ CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 
-unsigned int nTargetSpacing = 60; // 120 seconds
+unsigned int nTargetSpacing = 60; // 60 seconds
+unsigned int nStakeTargetSpacing = 20; // 20 seconds
 unsigned int nRetarget = 50;
 unsigned int nStakeMinAge = 24 * 60 * 60; // 1 day hour
 unsigned int nStakeMaxAge = -1;           //unlimited
@@ -1121,6 +1122,8 @@ static unsigned int GetNextTargetRequired_(const CBlockIndex* pindexLast, bool f
     // ppcoin: retarget with exponential moving toward target spacing
     CBigNum bnNew;
     bnNew.SetCompact(pindexPrev->nBits);
+
+    int64_t nTargetSpacing = fProofOfStake? nStakeTargetSpacing : nTargetSpacing;
     int64_t nInterval = nTargetTimespan / nTargetSpacing;
     bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
     bnNew /= ((nInterval + 1) * nTargetSpacing);
